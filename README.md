@@ -37,7 +37,7 @@ A React-based web application that provides prayer guidance for Muslims who join
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/SalahGuide.git
+git clone https://github.com/iamDiyorjon/SalahGuide.git
 cd SalahGuide
 
 # Install dependencies

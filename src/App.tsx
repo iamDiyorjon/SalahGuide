@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { PrayerForm } from "./components/PrayerForm";
 import { Result } from "./components/Result";
@@ -10,23 +10,22 @@ import {
 } from "./data/prayers";
 import { useLocale } from "./i18n/useLocale";
 import { calculate } from "./lib/calculate";
-import {
-	emptySelection,
-	loadSelection,
-	saveSelection,
-} from "./lib/persistence";
+
+interface Selection {
+	prayer: PrayerKey | "";
+	joinedRakat: number | null;
+	position: Position | "";
+}
+
+const emptySelection: Selection = {
+	prayer: "",
+	joinedRakat: null,
+	position: "",
+};
 
 export default function App() {
 	const { locale, setLocale, t } = useLocale();
-	const [selection, setSelection] = useState(emptySelection);
-
-	useEffect(() => {
-		setSelection(loadSelection());
-	}, []);
-
-	useEffect(() => {
-		saveSelection(selection);
-	}, [selection]);
+	const [selection, setSelection] = useState<Selection>(emptySelection);
 
 	const setPrayer = (prayer: PrayerKey | "") => {
 		setSelection((s) => {

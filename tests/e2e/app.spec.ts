@@ -73,7 +73,9 @@ test("changing prayer to one with fewer rakats clears an out-of-range rakat", as
 	await expect(page.locator("#rakat-select")).toHaveValue("");
 });
 
-test("selection persists across page reloads", async ({ page }) => {
+test("selection resets on page reload (only language persists)", async ({
+	page,
+}) => {
 	await page.goto("/");
 	await pickUz(page);
 	await page.locator("#prayer-select").selectOption("peshin");
@@ -82,10 +84,13 @@ test("selection persists across page reloads", async ({ page }) => {
 	await expect(page.getByTestId("result")).toBeVisible();
 
 	await page.reload();
-	await expect(page.locator("#prayer-select")).toHaveValue("peshin");
-	await expect(page.locator("#rakat-select")).toHaveValue("3");
-	await expect(page.getByLabel("Rukudan keyin qo'shildim")).toBeChecked();
-	await expect(page.getByTestId("result")).toBeVisible();
+	await expect(page.locator("#prayer-select")).toHaveValue("");
+	await expect(page.locator("#rakat-select")).toHaveCount(0);
+	await expect(page.getByTestId("result")).toHaveCount(0);
+	await expect(page.getByTestId("lang-uz")).toHaveAttribute(
+		"aria-pressed",
+		"true",
+	);
 });
 
 test("Reset button clears the form and result", async ({ page }) => {

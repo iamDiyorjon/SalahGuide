@@ -1,3 +1,52 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+  Theme variables. Outside Telegram we use the green/blue identity colors;
+  inside Telegram we adopt the user's theme so the app blends in with the
+  surrounding chat (light or dark).
+*/
+:root {
+	--sg-bg: #f0fdf4;
+	--sg-card-bg: #ffffff;
+	--sg-text: #1f2937;
+	--sg-border: #e5e7eb;
+	--sg-input-bg: #ffffff;
+	--sg-step-bg: #f9fafb;
+	--sg-info-bg: #eff6ff;
+	--sg-success-bg: #f0fdf4;
+	--sg-success-border: #bbf7d0;
+	--sg-accent: #16a34a;
+	--sg-accent-text: #ffffff;
+}
+
+html[data-telegram="true"] {
+	--sg-bg: var(--tg-theme-bg-color, #ffffff);
+	--sg-card-bg: var(--tg-theme-secondary-bg-color, #ffffff);
+	--sg-text: var(--tg-theme-text-color, #1f2937);
+	--sg-border: var(--tg-theme-section-separator-color, #e5e7eb);
+	--sg-input-bg: var(--tg-theme-bg-color, #ffffff);
+	--sg-step-bg: var(--tg-theme-bg-color, #f9fafb);
+	--sg-info-bg: var(--tg-theme-secondary-bg-color, #eff6ff);
+	--sg-success-bg: var(--tg-theme-secondary-bg-color, #f0fdf4);
+	--sg-success-border: var(--tg-theme-section-separator-color, #bbf7d0);
+	--sg-accent: var(--tg-theme-button-color, #16a34a);
+	--sg-accent-text: var(--tg-theme-button-text-color, #ffffff);
+}
+
+/* Subtle gradient backdrop only in browser mode (Telegram theme owns its own bg) */
+html:not([data-telegram="true"]) .sg-gradient {
+	background-image: linear-gradient(to bottom right, #f0fdf4, #eff6ff);
+}
+
+/* Respect Telegram safe-area insets when running fullscreen */
+body {
+	padding-top: env(safe-area-inset-top);
+	padding-bottom: env(safe-area-inset-bottom);
+}
+
+button,
+[role="button"] {
+	-webkit-tap-highlight-color: transparent;
+}

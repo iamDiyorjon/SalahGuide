@@ -1,20 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
+import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { PrayerForm } from "./components/PrayerForm";
 import { Result } from "./components/Result";
-import { calculate } from "./lib/calculate";
-import {
-	emptySelection,
-	loadSelection,
-	saveSelection,
-} from "./lib/persistence";
 import {
 	isPrayerKey,
 	prayers,
 	type PrayerKey,
 	type Position,
 } from "./data/prayers";
+import { useLocale } from "./i18n/useLocale";
+import { calculate } from "./lib/calculate";
+import {
+	emptySelection,
+	loadSelection,
+	saveSelection,
+} from "./lib/persistence";
 
 export default function App() {
+	const { locale, setLocale, t } = useLocale();
 	const [selection, setSelection] = useState(emptySelection);
 
 	useEffect(() => {
@@ -67,14 +70,13 @@ export default function App() {
 	return (
 		<div className="min-h-[100dvh] bg-[var(--sg-bg)] text-[var(--sg-text)] p-4 sg-gradient">
 			<div className="max-w-2xl mx-auto">
-				<header className="text-center mb-8 pt-2">
-					<h1 className="text-3xl font-bold mb-2">
-						Namozga Kech Qo'shilganlar Uchun Yo'riqnoma
-					</h1>
-					<p className="opacity-80">
-						Namozga kech qo'shilganingizdan keyin qanday davom etishni bilib
-						oling
-					</p>
+				<div className="flex justify-end mb-2">
+					<LanguageSwitcher locale={locale} onChange={setLocale} />
+				</div>
+
+				<header className="text-center mb-8">
+					<h1 className="text-3xl font-bold mb-2">{t.app.title}</h1>
+					<p className="opacity-80">{t.app.subtitle}</p>
 				</header>
 
 				<section
@@ -82,7 +84,7 @@ export default function App() {
 					className="bg-[var(--sg-card-bg)] rounded-lg shadow-lg p-6 mb-6 border border-[var(--sg-border)]"
 				>
 					<div className="flex justify-between items-center mb-4">
-						<h2 className="text-lg font-semibold">Tanlovlar</h2>
+						<h2 className="text-lg font-semibold">{t.form.sectionTitle}</h2>
 						{hasAnySelection && (
 							<button
 								type="button"
@@ -90,7 +92,7 @@ export default function App() {
 								data-testid="reset-button"
 								className="text-sm px-3 py-1.5 rounded-md border border-[var(--sg-border)] hover:bg-[var(--sg-step-bg)] transition"
 							>
-								Qaytadan
+								{t.form.reset}
 							</button>
 						)}
 					</div>
@@ -98,16 +100,18 @@ export default function App() {
 						prayer={selection.prayer}
 						joinedRakat={selection.joinedRakat}
 						position={selection.position}
+						locale={locale}
+						t={t}
 						onPrayerChange={setPrayer}
 						onJoinedRakatChange={setJoinedRakat}
 						onPositionChange={setPosition}
 					/>
 				</section>
 
-				{result && <Result result={result} />}
+				{result && <Result result={result} locale={locale} t={t} />}
 
 				<footer className="text-center mt-8 text-sm opacity-70">
-					<p>Alloh taolo namozimizni qabul qilsin!</p>
+					<p>{t.app.footer}</p>
 				</footer>
 			</div>
 		</div>

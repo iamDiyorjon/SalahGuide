@@ -3,13 +3,16 @@ import {
 	type Position,
 	prayers,
 	prayerKeys,
-	positionLabels,
 } from "../data/prayers";
+import type { Locale } from "../i18n/locales";
+import type { Translations } from "../i18n/translations";
 
 interface Props {
 	prayer: PrayerKey | "";
 	joinedRakat: number | null;
 	position: Position | "";
+	locale: Locale;
+	t: Translations;
 	onPrayerChange: (value: PrayerKey | "") => void;
 	onJoinedRakatChange: (value: number | null) => void;
 	onPositionChange: (value: Position | "") => void;
@@ -19,6 +22,8 @@ export function PrayerForm({
 	prayer,
 	joinedRakat,
 	position,
+	locale,
+	t,
 	onPrayerChange,
 	onJoinedRakatChange,
 	onPositionChange,
@@ -32,7 +37,7 @@ export function PrayerForm({
 					htmlFor="prayer-select"
 					className="block text-sm font-medium mb-2 opacity-80"
 				>
-					Namoz turini tanlang:
+					{t.form.prayerLabel}
 				</label>
 				<select
 					id="prayer-select"
@@ -40,10 +45,13 @@ export function PrayerForm({
 					onChange={(e) => onPrayerChange(e.target.value as PrayerKey | "")}
 					className="w-full p-3 rounded-lg border border-[var(--sg-border)] bg-[var(--sg-input-bg)] text-[var(--sg-text)] focus:ring-2 focus:ring-[var(--sg-accent)] focus:border-transparent"
 				>
-					<option value="">Namoz turini tanlang...</option>
+					<option value="">{t.form.prayerPlaceholder}</option>
 					{prayerKeys.map((key) => (
 						<option key={key} value={key}>
-							{prayers[key].nom} namozi ({prayers[key].rakatSoni} rakat)
+							{t.form.prayerOption(
+								prayers[key].nom[locale],
+								prayers[key].rakatSoni,
+							)}
 						</option>
 					))}
 				</select>
@@ -55,7 +63,7 @@ export function PrayerForm({
 						htmlFor="rakat-select"
 						className="block text-sm font-medium mb-2 opacity-80"
 					>
-						Qaysi rakatda qo'shildingiz?
+						{t.form.rakatLabel}
 					</label>
 					<select
 						id="rakat-select"
@@ -67,10 +75,10 @@ export function PrayerForm({
 						}
 						className="w-full p-3 rounded-lg border border-[var(--sg-border)] bg-[var(--sg-input-bg)] text-[var(--sg-text)] focus:ring-2 focus:ring-[var(--sg-accent)] focus:border-transparent"
 					>
-						<option value="">Rakatni tanlang...</option>
+						<option value="">{t.form.rakatPlaceholder}</option>
 						{Array.from({ length: rakatCount }, (_, i) => (
 							<option key={i + 1} value={i + 1}>
-								{i + 1}-rakat
+								{t.form.rakatOption(i + 1)}
 							</option>
 						))}
 					</select>
@@ -80,26 +88,24 @@ export function PrayerForm({
 			{joinedRakat !== null && (
 				<fieldset>
 					<legend className="block text-sm font-medium mb-2 opacity-80">
-						Qaysi holatda qo'shildingiz?
+						{t.form.positionLabel}
 					</legend>
 					<div className="space-y-2">
-						{(Object.entries(positionLabels) as [Position, string][]).map(
-							([key, label]) => (
-								<label key={key} className="flex items-center cursor-pointer">
-									<input
-										type="radio"
-										name="position"
-										value={key}
-										checked={position === key}
-										onChange={(e) =>
-											onPositionChange(e.target.value as Position)
-										}
-										className="mr-3 accent-[var(--sg-accent)]"
-									/>
-									<span>{label}</span>
-								</label>
-							),
-						)}
+						{(["qiyom", "ruku"] as const).map((key) => (
+							<label key={key} className="flex items-center cursor-pointer">
+								<input
+									type="radio"
+									name="position"
+									value={key}
+									checked={position === key}
+									onChange={(e) => onPositionChange(e.target.value as Position)}
+									className="mr-3 accent-[var(--sg-accent)]"
+								/>
+								<span>
+									{key === "qiyom" ? t.form.positionQiyom : t.form.positionRuku}
+								</span>
+							</label>
+						))}
 					</div>
 				</fieldset>
 			)}

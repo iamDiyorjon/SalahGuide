@@ -1,14 +1,11 @@
-import {
-	type PrayerKey,
-	type Position,
-	prayers,
-	positionLabels,
-} from "../data/prayers";
+import { type PrayerKey, type Position, prayers } from "../data/prayers";
+
+export type QiroatType = "F_S" | "F_S_AUDIBLE" | "F_ONLY";
 
 export interface Instruction {
 	rakatRaqami: number;
 	personalRakatCount: number;
-	qiroat: string;
+	qiroat: QiroatType;
 	otirish: boolean;
 }
 
@@ -19,17 +16,14 @@ export interface CalculationInput {
 }
 
 export interface CalculationResult {
-	namozNomi: string;
+	prayer: PrayerKey;
+	joinedRakat: number;
+	position: Position;
 	imomBilanOqildi: number;
 	qolganRakatlar: number;
 	tugallangan: boolean;
-	qoshilganHolat: string;
 	yoriqnomalar: Instruction[];
 }
-
-const QIROAT_F_S = "Fotiha + Sura";
-const QIROAT_F_S_OVOZ = "Fotiha + Sura (ovoz chiqarib)";
-const QIROAT_F_ONLY = "Faqat Fotiha";
 
 export function calculate(input: CalculationInput): CalculationResult {
 	const prayer = prayers[input.prayer];
@@ -41,15 +35,15 @@ export function calculate(input: CalculationInput): CalculationResult {
 			: prayer.rakatSoni - joinedRakat;
 
 	const qolganRakatlar = Math.max(0, prayer.rakatSoni - imomBilanOqildi);
-	const qoshilganHolat = `${joinedRakat}-rakatda ${positionLabels[position]}`;
 
 	if (qolganRakatlar === 0) {
 		return {
-			namozNomi: prayer.nom,
+			prayer: input.prayer,
+			joinedRakat,
+			position,
 			imomBilanOqildi,
 			qolganRakatlar: 0,
 			tugallangan: true,
-			qoshilganHolat,
 			yoriqnomalar: [],
 		};
 	}
@@ -71,11 +65,12 @@ export function calculate(input: CalculationInput): CalculationResult {
 	}
 
 	return {
-		namozNomi: prayer.nom,
+		prayer: input.prayer,
+		joinedRakat,
+		position,
 		imomBilanOqildi,
 		qolganRakatlar,
 		tugallangan: false,
-		qoshilganHolat,
 		yoriqnomalar,
 	};
 }
@@ -84,12 +79,12 @@ function qiroatFor(
 	prayer: PrayerKey,
 	i: number,
 	personalRakatCount: number,
-): string {
-	if (prayer === "bomdod") return QIROAT_F_S_OVOZ;
+): QiroatType {
+	if (prayer === "bomdod") return "F_S_AUDIBLE";
 	if (prayer === "shom") {
-		return personalRakatCount <= 2 ? QIROAT_F_S : QIROAT_F_ONLY;
+		return personalRakatCount <= 2 ? "F_S" : "F_ONLY";
 	}
-	return i <= 2 ? QIROAT_F_S : QIROAT_F_ONLY;
+	return i <= 2 ? "F_S" : "F_ONLY";
 }
 
 function shouldSit(args: {

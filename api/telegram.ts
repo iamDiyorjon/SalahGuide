@@ -10,32 +10,98 @@ export const config = { runtime: "edge" };
 
 const MINI_APP_URL = "https://salah-guide.vercel.app";
 
-const WELCOME = `Assalomu alaykum! 🕌
+type BotLocale = "uz" | "ru" | "en";
+
+interface BotMessages {
+	welcome: string;
+	help: string;
+	about: string;
+	unknown: string;
+	openButton: string;
+}
+
+const messages: Record<BotLocale, BotMessages> = {
+	uz: {
+		welcome: `Assalomu alaykum! 🕌
 
 Bu bot — *Namozga kech qo'shilganlar uchun yo'riqnoma*. Imom bilan namozga kech qo'shilganingizda nechta rakat qolganini va qanday o'qish kerakligini ko'rsatadi.
 
-Pastdagi tugma orqali ilovani oching 👇`;
-
-const HELP = `*Buyruqlar:*
+Pastdagi tugma orqali ilovani oching 👇`,
+		help: `*Buyruqlar:*
 /start — botni boshlash
 /help — yordam
 /about — ilova haqida
 
-Yoki pastdagi *Menu* tugmasidan ilovani oching.`;
-
-const ABOUT = `*Rakāt — Namoz Yo'riqnomasi*
+Yoki pastdagi *Menu* tugmasidan ilovani oching.`,
+		about: `*Rakāt — Namoz Yo'riqnomasi*
 
 Imom bilan kech qo'shilganda nechta rakat qolganini hisoblaydi va har bir rakatda Fotiha + Sura yoki faqat Fotiha o'qishni, qachon tashahhud o'tirishni ko'rsatadi.
 
 Open source: github.com/iamDiyorjon/SalahGuide
-Alloh taolo namozimizni qabul qilsin!`;
+Alloh taolo namozimizni qabul qilsin!`,
+		unknown: "Noma'lum buyruq. /help orqali buyruqlar ro'yxatini ko'ring.",
+		openButton: "🕌 Ilovani ochish",
+	},
+	ru: {
+		welcome: `Ассаламу алайкум! 🕌
+
+Этот бот — *руководство для опоздавших на намаз*. Подскажет, сколько ракаатов осталось и как правильно их завершить.
+
+Откройте приложение по кнопке ниже 👇`,
+		help: `*Команды:*
+/start — начать
+/help — помощь
+/about — о приложении
+
+Или нажмите кнопку *Menu* внизу.`,
+		about: `*Rakāt — Руководство по намазу*
+
+Считает оставшиеся ракааты для опоздавших и показывает, что читать (Фатиха + сура или только Фатиха) и когда сидеть на ташаххуд.
+
+Open source: github.com/iamDiyorjon/SalahGuide
+Да примет Аллах наш намаз!`,
+		unknown: "Неизвестная команда. Введите /help, чтобы увидеть список команд.",
+		openButton: "🕌 Открыть приложение",
+	},
+	en: {
+		welcome: `Assalamu alaykum! 🕌
+
+This bot is a *late-joiner's prayer guide*. It tells you how many rakats remain and how to complete them correctly.
+
+Open the app using the button below 👇`,
+		help: `*Commands:*
+/start — start the bot
+/help — help
+/about — about the app
+
+Or tap the *Menu* button below.`,
+		about: `*Rakāt — Prayer Guide*
+
+Calculates remaining rakats for late joiners and shows what to recite (Fatiha + Sura or Fatiha only) and when to sit for Tashahhud.
+
+Open source: github.com/iamDiyorjon/SalahGuide
+May Allah accept our prayers!`,
+		unknown: "Unknown command. Use /help to see available commands.",
+		openButton: "🕌 Open app",
+	},
+};
 
 interface TelegramUpdate {
 	message?: {
 		chat: { id: number };
 		text?: string;
-		from?: { first_name?: string };
+		from?: {
+			first_name?: string;
+			language_code?: string;
+		};
 	};
+}
+
+function pickLocale(code: string | undefined): BotLocale {
+	const c = code?.slice(0, 2).toLowerCase();
+	if (c === "ru") return "ru";
+	if (c === "en") return "en";
+	return "uz";
 }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -61,64 +127,42 @@ export default async function handler(req: Request): Promise<Response> {
 		return new Response("OK");
 	}
 
+	const locale = pickLocale(message.from?.language_code);
+	const m = messages[locale];
 	const text = message.text.trim();
 	const chatId = message.chat.id;
 
 	if (text.startsWith("/start")) {
-		await sendWelcome(token, chatId);
+		await sendWithButton(token, chatId, m.welcome, m.openButton);
 	} else if (text.startsWith("/help")) {
-		await sendMessage(token, chatId, HELP);
+		await sendWithButton(token, chatId, m.help, m.openButton);
 	} else if (text.startsWith("/about")) {
-		await sendMessage(token, chatId, ABOUT);
+		await sendWithButton(token, chatId, m.about, m.openButton);
 	} else if (text.startsWith("/")) {
-		await sendMessage(
-			token,
-			chatId,
-			"Noma'lum buyruq. /help orqali buyruqlar ro'yxatini ko'ring.",
-		);
+		await sendWithButton(token, chatId, m.unknown, m.openButton);
 	}
 
 	return new Response("OK");
 }
 
-async function sendWelcome(token: string, chatId: number): Promise<void> {
-	await tg(token, "sendMessage", {
-		chat_id: chatId,
-		text: WELCOME,
-		parse_mode: "Markdown",
-		reply_markup: {
-			inline_keyboard: [
-				[{ text: "🕌 Ilovani ochish", web_app: { url: MINI_APP_URL } }],
-			],
-		},
-	});
-}
-
-async function sendMessage(
+async function sendWithButton(
 	token: string,
 	chatId: number,
 	text: string,
+	buttonText: string,
 ): Promise<void> {
-	await tg(token, "sendMessage", {
-		chat_id: chatId,
-		text,
-		parse_mode: "Markdown",
-		reply_markup: {
-			inline_keyboard: [
-				[{ text: "🕌 Ilovani ochish", web_app: { url: MINI_APP_URL } }],
-			],
-		},
-	});
-}
-
-async function tg(
-	token: string,
-	method: string,
-	body: Record<string, unknown>,
-): Promise<void> {
-	await fetch(`https://api.telegram.org/bot${token}/${method}`, {
+	await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(body),
+		body: JSON.stringify({
+			chat_id: chatId,
+			text,
+			parse_mode: "Markdown",
+			reply_markup: {
+				inline_keyboard: [
+					[{ text: buttonText, web_app: { url: MINI_APP_URL } }],
+				],
+			},
+		}),
 	});
 }

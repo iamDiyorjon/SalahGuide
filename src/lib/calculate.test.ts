@@ -2,10 +2,6 @@ import { describe, expect, it } from "vitest";
 import { calculate } from "./calculate";
 import type { PrayerKey, Position } from "../data/prayers";
 
-const F_S = "Fotiha + Sura";
-const F_S_OVOZ = "Fotiha + Sura (ovoz chiqarib)";
-const F_ONLY = "Faqat Fotiha";
-
 describe("calculate — Bomdod (2 rakats)", () => {
 	it("rakat 1 qiyom → joined for both rakats, prayer complete", () => {
 		const r = calculate({
@@ -27,7 +23,7 @@ describe("calculate — Bomdod (2 rakats)", () => {
 		expect(r.yoriqnomalar).toHaveLength(1);
 		expect(r.yoriqnomalar[0]).toMatchObject({
 			rakatRaqami: 1,
-			qiroat: F_S_OVOZ,
+			qiroat: "F_S_AUDIBLE",
 			otirish: true,
 		});
 	});
@@ -36,7 +32,10 @@ describe("calculate — Bomdod (2 rakats)", () => {
 		const r = calculate({ prayer: "bomdod", joinedRakat: 2, position: "ruku" });
 		expect(r.imomBilanOqildi).toBe(0);
 		expect(r.qolganRakatlar).toBe(2);
-		expect(r.yoriqnomalar.map((x) => x.qiroat)).toEqual([F_S_OVOZ, F_S_OVOZ]);
+		expect(r.yoriqnomalar.map((x) => x.qiroat)).toEqual([
+			"F_S_AUDIBLE",
+			"F_S_AUDIBLE",
+		]);
 		expect(r.yoriqnomalar.map((x) => x.otirish)).toEqual([false, true]);
 	});
 });
@@ -50,14 +49,18 @@ describe("calculate — Shom (3 rakats)", () => {
 	it("rakat 2 ruku → 2 makeups, mid-sit at first, final-sit at second", () => {
 		const r = calculate({ prayer: "shom", joinedRakat: 2, position: "ruku" });
 		expect(r.qolganRakatlar).toBe(2);
-		expect(r.yoriqnomalar.map((x) => x.qiroat)).toEqual([F_S, F_ONLY]);
+		expect(r.yoriqnomalar.map((x) => x.qiroat)).toEqual(["F_S", "F_ONLY"]);
 		expect(r.yoriqnomalar.map((x) => x.otirish)).toEqual([true, true]);
 	});
 
 	it("rakat 3 ruku → 3 makeups, sit at 2nd cumulative and final", () => {
 		const r = calculate({ prayer: "shom", joinedRakat: 3, position: "ruku" });
 		expect(r.qolganRakatlar).toBe(3);
-		expect(r.yoriqnomalar.map((x) => x.qiroat)).toEqual([F_S, F_S, F_ONLY]);
+		expect(r.yoriqnomalar.map((x) => x.qiroat)).toEqual([
+			"F_S",
+			"F_S",
+			"F_ONLY",
+		]);
 		expect(r.yoriqnomalar.map((x) => x.otirish)).toEqual([false, true, true]);
 	});
 
@@ -81,7 +84,11 @@ describe("calculate — 4-rakat prayers (peshin/asr/xufton)", () => {
 			it("rakat 3 ruku → 3 makeups, sit after personal-2 and final", () => {
 				const r = calculate({ prayer, joinedRakat: 3, position: "ruku" });
 				expect(r.qolganRakatlar).toBe(3);
-				expect(r.yoriqnomalar.map((x) => x.qiroat)).toEqual([F_S, F_S, F_ONLY]);
+				expect(r.yoriqnomalar.map((x) => x.qiroat)).toEqual([
+					"F_S",
+					"F_S",
+					"F_ONLY",
+				]);
 				expect(r.yoriqnomalar.map((x) => x.otirish)).toEqual([
 					true,
 					false,
@@ -93,10 +100,10 @@ describe("calculate — 4-rakat prayers (peshin/asr/xufton)", () => {
 				const r = calculate({ prayer, joinedRakat: 4, position: "ruku" });
 				expect(r.qolganRakatlar).toBe(4);
 				expect(r.yoriqnomalar.map((x) => x.qiroat)).toEqual([
-					F_S,
-					F_S,
-					F_ONLY,
-					F_ONLY,
+					"F_S",
+					"F_S",
+					"F_ONLY",
+					"F_ONLY",
 				]);
 				expect(r.yoriqnomalar.map((x) => x.otirish)).toEqual([
 					false,
@@ -109,23 +116,28 @@ describe("calculate — 4-rakat prayers (peshin/asr/xufton)", () => {
 			it("rakat 2 ruku → 2 makeups, only final-sit", () => {
 				const r = calculate({ prayer, joinedRakat: 2, position: "ruku" });
 				expect(r.qolganRakatlar).toBe(2);
-				expect(r.yoriqnomalar.map((x) => x.qiroat)).toEqual([F_S, F_S]);
+				expect(r.yoriqnomalar.map((x) => x.qiroat)).toEqual(["F_S", "F_S"]);
 				expect(r.yoriqnomalar.map((x) => x.otirish)).toEqual([false, true]);
 			});
 
 			it("rakat 1 ruku → 1 makeup, treated as fresh first rakat (Fotiha+Sura)", () => {
 				const r = calculate({ prayer, joinedRakat: 1, position: "ruku" });
 				expect(r.qolganRakatlar).toBe(1);
-				expect(r.yoriqnomalar[0]).toMatchObject({ qiroat: F_S, otirish: true });
+				expect(r.yoriqnomalar[0]).toMatchObject({
+					qiroat: "F_S",
+					otirish: true,
+				});
 			});
 		});
 	}
 });
 
-describe("qoshilganHolat label is human-readable Uzbek", () => {
-	it("uses Latin Uzbek with apostrophes", () => {
+describe("calculate — result contains language-neutral identifiers", () => {
+	it("returns prayer key, joinedRakat, and position for downstream rendering", () => {
 		const r = calculate({ prayer: "shom", joinedRakat: 2, position: "ruku" });
-		expect(r.qoshilganHolat).toBe("2-rakatda Rukudan keyin qo'shildim");
+		expect(r.prayer).toBe("shom");
+		expect(r.joinedRakat).toBe(2);
+		expect(r.position).toBe("ruku");
 	});
 });
 

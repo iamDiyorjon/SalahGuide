@@ -25,7 +25,7 @@ test("Bomdod rakat 1 qiyom → tugallangan state", async ({ page }) => {
 	await pickUz(page);
 	await page.locator("#prayer-select").selectOption("bomdod");
 	await page.locator("#rakat-select").selectOption("1");
-	await page.getByLabel("Rukudan oldin qo'shildim").check();
+	await page.getByLabel("Ruku'dan oldin qo'shildim").check();
 
 	await expect(page.getByTestId("complete-state")).toBeVisible();
 	await expect(page.getByText("Tabriklaymiz!")).toBeVisible();
@@ -38,7 +38,7 @@ test("Shom rakat 3 ruku → 3 instruction cards with correct qiroat", async ({
 	await pickUz(page);
 	await page.locator("#prayer-select").selectOption("shom");
 	await page.locator("#rakat-select").selectOption("3");
-	await page.getByLabel("Rukudan keyin qo'shildim").check();
+	await page.getByLabel("Ruku'dan keyin qo'shildim").check();
 
 	const items = page.getByTestId("instruction-item");
 	await expect(items).toHaveCount(3);
@@ -80,7 +80,7 @@ test("selection resets on page reload (only language persists)", async ({
 	await pickUz(page);
 	await page.locator("#prayer-select").selectOption("peshin");
 	await page.locator("#rakat-select").selectOption("3");
-	await page.getByLabel("Rukudan keyin qo'shildim").check();
+	await page.getByLabel("Ruku'dan keyin qo'shildim").check();
 	await expect(page.getByTestId("result")).toBeVisible();
 
 	await page.reload();
@@ -98,7 +98,7 @@ test("Reset button clears the form and result", async ({ page }) => {
 	await pickUz(page);
 	await page.locator("#prayer-select").selectOption("asr");
 	await page.locator("#rakat-select").selectOption("2");
-	await page.getByLabel("Rukudan keyin qo'shildim").check();
+	await page.getByLabel("Ruku'dan keyin qo'shildim").check();
 	await expect(page.getByTestId("result")).toBeVisible();
 
 	await page.getByTestId("reset-button").click();
@@ -133,7 +133,7 @@ test("Russian locale: Shom rakat 3 ruku shows translated qiroat", async ({
 	await page.getByTestId("lang-ru").click();
 	await page.locator("#prayer-select").selectOption("shom");
 	await page.locator("#rakat-select").selectOption("3");
-	await page.getByLabel("Присоединился после руку").check();
+	await page.getByLabel("Присоединился после руку'").check();
 
 	const items = page.getByTestId("instruction-item");
 	await expect(items).toHaveCount(3);

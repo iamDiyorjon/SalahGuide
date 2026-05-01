@@ -36,7 +36,8 @@ export interface Translations {
 			heading: (n: number) => string;
 			rakatLabel: (n: number) => string;
 			qiroatLabel: string;
-			tashahhud: string;
+			tashahhudMiddle: string;
+			tashahhudFinal: string;
 			notesTitle: string;
 			notes: readonly string[];
 		};
@@ -63,8 +64,8 @@ const uz: Translations = {
 		rakatPlaceholder: "Rakatni tanlang...",
 		rakatOption: (n) => `${n}-rakat`,
 		positionLabel: "Qaysi holatda qo'shildingiz?",
-		positionQiyom: "Rukudan oldin qo'shildim",
-		positionRuku: "Rukudan keyin qo'shildim",
+		positionQiyom: "Ruku'dan oldin qo'shildim",
+		positionRuku: "Ruku'dan keyin qo'shildim",
 		reset: "Qaytadan",
 		prayerOption: (name, count) => `${name} namozi (${count} rakat)`,
 	},
@@ -83,12 +84,13 @@ const uz: Translations = {
 				`Imom salom berganidan keyin ${n} rakat o'qishingiz kerak:`,
 			rakatLabel: (n) => `${n}-rakat:`,
 			qiroatLabel: "Qiroat:",
-			tashahhud: "Tashahhud o'qib o'tiring",
+			tashahhudMiddle: "Tashahhud o'qiladi",
+			tashahhudFinal: "Tashahhud, salavotlar va duo o'qib salom beriladi",
 			notesTitle: "Eslatma:",
 			notes: [
-				"Barcha rakatlarni yakunlaganingizdan keyin tashahhud va salom bering",
-				"Agar shubhangiz bo'lsa, namozni qaytadan o'qing",
-				"Doimo Alloh taoloning roziligi uchun namoz o'qing",
+				"Barcha rakatlarni yakunlaganingizdan keyin tashahhud, salavotlar va duo o'qib salom bering",
+				"Agar rakatlar soni haqida shubha qilsangiz: bu ilk marta bo'lsa, namozni qaytadan o'qing; takror sodir bo'layotgan bo'lsa, gumoningizga ko'ra ado qiling",
+				"Namozingizni Alloh roziligi uchun ado qiling!",
 			],
 		},
 		qiroat: {
@@ -114,8 +116,8 @@ const ru: Translations = {
 		rakatPlaceholder: "Выберите ракаат...",
 		rakatOption: (n) => `${n}-й ракаат`,
 		positionLabel: "В каком положении вы присоединились?",
-		positionQiyom: "Присоединился до руку",
-		positionRuku: "Присоединился после руку",
+		positionQiyom: "Присоединился до руку'",
+		positionRuku: "Присоединился после руку'",
 		reset: "Сбросить",
 		prayerOption: (name, count) => `${name} (${count} ракаата)`,
 	},
@@ -134,12 +136,13 @@ const ru: Translations = {
 				`После приветствия имама вам нужно прочитать ${n} ракаат:`,
 			rakatLabel: (n) => `${n}-й ракаат:`,
 			qiroatLabel: "Чтение:",
-			tashahhud: "Сядьте и прочитайте ташаххуд",
+			tashahhudMiddle: "Читается ташаххуд",
+			tashahhudFinal: "Читаются ташаххуд, салаваты и дуа, затем даётся салам",
 			notesTitle: "Примечание:",
 			notes: [
-				"После завершения всех ракаатов прочитайте ташаххуд и сделайте таслим",
-				"Если у вас есть сомнения, прочитайте намаз заново",
-				"Всегда совершайте намаз ради довольства Аллаха",
+				"После завершения всех ракаатов прочитайте ташаххуд, салаваты и дуа, затем сделайте салам",
+				"Если у вас сомнения в количестве ракаатов: если это впервые — повторите намаз; если такое уже бывало — следуйте своему предположению",
+				"Совершайте намаз ради довольства Аллаха!",
 			],
 		},
 		qiroat: {
@@ -165,8 +168,8 @@ const en: Translations = {
 		rakatPlaceholder: "Choose a rakat...",
 		rakatOption: (n) => `Rakat ${n}`,
 		positionLabel: "Which position when you joined?",
-		positionQiyom: "Joined before Ruku",
-		positionRuku: "Joined after Ruku",
+		positionQiyom: "Joined before Ruku'",
+		positionRuku: "Joined after Ruku'",
 		reset: "Reset",
 		prayerOption: (name, count) => `${name} (${count} rakats)`,
 	},
@@ -184,12 +187,13 @@ const en: Translations = {
 			heading: (n) => `After the imam's salam, you need to pray ${n} rakats:`,
 			rakatLabel: (n) => `Rakat ${n}:`,
 			qiroatLabel: "Recitation:",
-			tashahhud: "Sit and recite Tashahhud",
+			tashahhudMiddle: "Recite Tashahhud",
+			tashahhudFinal: "Recite Tashahhud, Salawat and Du'a, then give Salam",
 			notesTitle: "Notes:",
 			notes: [
-				"After finishing all rakats, recite Tashahhud and give Salam",
-				"If you are unsure, repeat the prayer",
-				"Always pray seeking the pleasure of Allah",
+				"After finishing all rakats, recite Tashahhud, Salawat and Du'a, then give Salam",
+				"If you doubt the rakat count: if it's the first time, repeat the prayer; if it has happened before, act on your strongest assumption",
+				"Perform your prayer for the pleasure of Allah!",
 			],
 		},
 		qiroat: {

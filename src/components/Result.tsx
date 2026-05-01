@@ -68,33 +68,38 @@ function MakeupSteps({
 				</h3>
 
 				<ol data-testid="instruction-list" className="space-y-4">
-					{result.yoriqnomalar.map((step) => (
-						<li
-							key={step.rakatRaqami}
-							data-testid="instruction-item"
-							className="border border-[var(--sg-border)] rounded-lg p-4 bg-[var(--sg-step-bg)]"
-						>
-							<div className="flex items-start space-x-4">
-								<div className="bg-[var(--sg-accent)] text-[var(--sg-accent-text)] rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm shrink-0">
-									{step.rakatRaqami}
-								</div>
-								<div className="flex-1">
-									<h4 className="font-medium mb-2">
-										{t.result.makeup.rakatLabel(step.rakatRaqami)}
-									</h4>
-									<p className="opacity-90 mb-2">
-										<strong>{t.result.makeup.qiroatLabel}</strong>{" "}
-										{t.result.qiroat[step.qiroat]}
-									</p>
-									{step.otirish && (
-										<p className="text-[var(--sg-accent)] font-medium">
-											{t.result.makeup.tashahhud}
+					{result.yoriqnomalar.map((step, idx) => {
+						const isFinal = idx === result.yoriqnomalar.length - 1;
+						return (
+							<li
+								key={step.rakatRaqami}
+								data-testid="instruction-item"
+								className="border border-[var(--sg-border)] rounded-lg p-4 bg-[var(--sg-step-bg)]"
+							>
+								<div className="flex items-start space-x-4">
+									<div className="bg-[var(--sg-accent)] text-[var(--sg-accent-text)] rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm shrink-0">
+										{step.rakatRaqami}
+									</div>
+									<div className="flex-1">
+										<h4 className="font-medium mb-2">
+											{t.result.makeup.rakatLabel(step.rakatRaqami)}
+										</h4>
+										<p className="opacity-90 mb-2">
+											<strong>{t.result.makeup.qiroatLabel}</strong>{" "}
+											{t.result.qiroat[step.qiroat]}
 										</p>
-									)}
+										{step.otirish && (
+											<p className="text-[var(--sg-accent)] font-medium">
+												{isFinal
+													? t.result.makeup.tashahhudFinal
+													: t.result.makeup.tashahhudMiddle}
+											</p>
+										)}
+									</div>
 								</div>
-							</div>
-						</li>
-					))}
+							</li>
+						);
+					})}
 				</ol>
 			</div>
 

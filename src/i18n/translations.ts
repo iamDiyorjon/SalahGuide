@@ -58,8 +58,7 @@ export interface Translations {
 const uz: Translations = {
 	app: {
 		title: "Namozga Kech Qo'shilganlar Uchun Yo'riqnoma",
-		subtitle:
-			"Namozga kech qo'shilganingizdan keyin qanday davom etishni bilib oling",
+		subtitle: "Qolgan rakatlarni hisoblab, namozingizni to'g'ri yakunlang",
 		footer: "Alloh taolo namozimizni qabul qilsin!",
 	},
 	form: {
@@ -229,8 +228,7 @@ const en: Translations = {
 const uzCyrl: Translations = {
 	app: {
 		title: "Намозга кеч қўшилганлар учун йўриқнома",
-		subtitle:
-			"Намозга кеч қўшилганингиздан кейин қандай давом этишни билиб олинг",
+		subtitle: "Қолган ракатларни ҳисоблаб, намозингизни тўғри якунланг",
 		footer: "Аллоҳ таоло намозимизни қабул қилсин!",
 	},
 	form: {

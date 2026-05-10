@@ -1,6 +1,13 @@
 export {};
 
 declare global {
+	interface TelegramSafeAreaInset {
+		top: number;
+		bottom: number;
+		left: number;
+		right: number;
+	}
+
 	interface TelegramWebApp {
 		ready: () => void;
 		expand: () => void;
@@ -11,6 +18,10 @@ declare global {
 		themeParams: Record<string, string>;
 		initData: string;
 		initDataUnsafe: Record<string, unknown>;
+		safeAreaInset?: TelegramSafeAreaInset;
+		contentSafeAreaInset?: TelegramSafeAreaInset;
+		onEvent?: (event: string, handler: () => void) => void;
+		offEvent?: (event: string, handler: () => void) => void;
 		MainButton?: {
 			text: string;
 			show: () => void;

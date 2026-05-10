@@ -40,10 +40,14 @@ html:not([data-telegram="true"]) .sg-gradient {
 	background-image: linear-gradient(to bottom right, #f0fdf4, #eff6ff);
 }
 
-/* Respect Telegram safe-area insets when running fullscreen */
+/* Respect Telegram safe-area insets when running fullscreen.
+   --tg-safe-* are populated from JS (sum of safeAreaInset + contentSafeAreaInset)
+   so the Telegram header overlay does not cover our content. */
 body {
-	padding-top: env(safe-area-inset-top);
-	padding-bottom: env(safe-area-inset-bottom);
+	padding-top: max(env(safe-area-inset-top), var(--tg-safe-top, 0px));
+	padding-bottom: max(env(safe-area-inset-bottom), var(--tg-safe-bottom, 0px));
+	padding-left: max(env(safe-area-inset-left), var(--tg-safe-left, 0px));
+	padding-right: max(env(safe-area-inset-right), var(--tg-safe-right, 0px));
 }
 
 button,

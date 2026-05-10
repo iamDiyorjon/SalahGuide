@@ -11,27 +11,27 @@ export interface Prayer {
 
 export const prayers: Record<PrayerKey, Prayer> = {
 	bomdod: {
-		nom: { uz: "Bomdod", ru: "Фаджр", en: "Fajr" },
+		nom: { uz: "Bomdod", "uz-cyrl": "Бомдод", ru: "Фаджр", en: "Fajr" },
 		rakatSoni: 2,
 		ovozChiqarib: true,
 	},
 	peshin: {
-		nom: { uz: "Peshin", ru: "Зухр", en: "Dhuhr" },
+		nom: { uz: "Peshin", "uz-cyrl": "Пешин", ru: "Зухр", en: "Dhuhr" },
 		rakatSoni: 4,
 		ovozChiqarib: false,
 	},
 	asr: {
-		nom: { uz: "Asr", ru: "Аср", en: "Asr" },
+		nom: { uz: "Asr", "uz-cyrl": "Аср", ru: "Аср", en: "Asr" },
 		rakatSoni: 4,
 		ovozChiqarib: false,
 	},
 	shom: {
-		nom: { uz: "Shom", ru: "Магриб", en: "Maghrib" },
+		nom: { uz: "Shom", "uz-cyrl": "Шом", ru: "Магриб", en: "Maghrib" },
 		rakatSoni: 3,
 		ovozChiqarib: true,
 	},
 	xufton: {
-		nom: { uz: "Xufton", ru: "Иша", en: "Isha" },
+		nom: { uz: "Xufton", "uz-cyrl": "Хуфтон", ru: "Иша", en: "Isha" },
 		rakatSoni: 4,
 		ovozChiqarib: true,
 	},

@@ -204,4 +204,59 @@ const en: Translations = {
 	},
 };
 
-export const translations: Record<Locale, Translations> = { uz, ru, en };
+const uzCyrl: Translations = {
+	app: {
+		title: "Намозга кеч қўшилганлар учун йўриқнома",
+		subtitle:
+			"Намозга кеч қўшилганингиздан кейин қандай давом этишни билиб олинг",
+		footer: "Аллоҳ таоло намозимизни қабул қилсин!",
+	},
+	form: {
+		sectionTitle: "Танловлар",
+		prayerLabel: "Намоз турини танланг:",
+		prayerPlaceholder: "Намоз турини танланг...",
+		rakatLabel: "Қайси ракатда қўшилдингиз?",
+		rakatPlaceholder: "Ракатни танланг...",
+		rakatOption: (n) => `${n}-ракат`,
+		positionLabel: "Қайси ҳолатда қўшилдингиз?",
+		positionQiyom: "Рукуъдан олдин қўшилдим",
+		positionRuku: "Рукуъдан кейин қўшилдим",
+		reset: "Қайтадан",
+		prayerOption: (name, count) => `${name} намози (${count} ракат)`,
+	},
+	result: {
+		heading: "Сизнинг йўриқномангиз",
+		summary: (name, rakat, pos) => `${name} намози: ${rakat}-ракатда ${pos}`,
+		imamSummary: (w, r) => `Имом билан: ${w} ракат — қолади: ${r} ракат`,
+		complete: {
+			title: "Табриклаймиз!",
+			body1: "Сиз имом билан барча ракатларни ўқиб бўлгансиз",
+			body2: "Имом салом берганидан кейин бошқа ҳеч нарса қилишингиз шарт эмас",
+		},
+		makeup: {
+			heading: (n) => `Имом салом берганидан кейин ${n} ракат ўқишингиз керак:`,
+			rakatLabel: (n) => `${n}-ракат:`,
+			qiroatLabel: "Қироат:",
+			tashahhudMiddle: "Ташаҳҳуд ўқилади",
+			tashahhudFinal: "Ташаҳҳуд, салавотлар ва дуо ўқиб салом берилади",
+			notesTitle: "Эслатма:",
+			notes: [
+				"Барча ракатларни якунлаганингиздан кейин ташаҳҳуд, салавотлар ва дуо ўқиб салом беринг",
+				"Агар ракатлар сони ҳақида шубҳа қилсангиз: бу илк марта бўлса, намозни қайтадан ўқинг; такрор содир бўлаётган бўлса, гумонингизга кўра адо қилинг",
+				"Намозингизни Аллоҳ розилиги учун адо қилинг!",
+			],
+		},
+		qiroat: {
+			F_S: "Фотиҳа + Сура",
+			F_S_AUDIBLE: "Фотиҳа + Сура (овоз чиқариб)",
+			F_ONLY: "Фақат Фотиҳа",
+		},
+	},
+};
+
+export const translations: Record<Locale, Translations> = {
+	uz,
+	"uz-cyrl": uzCyrl,
+	ru,
+	en,
+};

@@ -4,7 +4,6 @@ export interface Translations {
 	app: {
 		title: string;
 		subtitle: string;
-		footer: string;
 	};
 	form: {
 		sectionTitle: string;
@@ -59,7 +58,6 @@ const uz: Translations = {
 	app: {
 		title: "Namozga Kech Qo'shilganlar Uchun Yo'riqnoma",
 		subtitle: "Qolgan rakatlarni hisoblab, namozingizni to'g'ri yakunlang",
-		footer: "Alloh taolo namozimizni qabul qilsin!",
 	},
 	form: {
 		sectionTitle: "Tanlovlar",
@@ -116,7 +114,6 @@ const ru: Translations = {
 		title: "Руководство для опоздавших на намаз",
 		subtitle:
 			"Узнайте, как правильно завершить намаз, если вы присоединились с опозданием",
-		footer: "Да примет Аллах наш намаз!",
 	},
 	form: {
 		sectionTitle: "Параметры",
@@ -173,7 +170,6 @@ const en: Translations = {
 		title: "Late-Joiner's Prayer Guide",
 		subtitle:
 			"Find out how to complete your prayer correctly when you join the congregation late",
-		footer: "May Allah accept our prayers!",
 	},
 	form: {
 		sectionTitle: "Selections",
@@ -229,7 +225,6 @@ const uzCyrl: Translations = {
 	app: {
 		title: "Намозга кеч қўшилганлар учун йўриқнома",
 		subtitle: "Қолган ракатларни ҳисоблаб, намозингизни тўғри якунланг",
-		footer: "Аллоҳ таоло намозимизни қабул қилсин!",
 	},
 	form: {
 		sectionTitle: "Танловлар",

@@ -108,10 +108,6 @@ export default function App() {
 				</section>
 
 				{result && <Result result={result} locale={locale} t={t} />}
-
-				<footer className="text-center mt-8 text-sm opacity-70">
-					<p>{t.app.footer}</p>
-				</footer>
 			</div>
 		</div>
 	);

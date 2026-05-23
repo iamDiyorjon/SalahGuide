@@ -10,7 +10,7 @@ export const config = { runtime: "edge" };
 
 const MINI_APP_URL = "https://salah-guide.vercel.app";
 
-type BotLocale = "uz" | "ru" | "en";
+type BotLocale = "uz" | "uz-cyrl" | "ru" | "en";
 
 interface BotMessages {
 	welcome: string;
@@ -20,11 +20,22 @@ interface BotMessages {
 	openButton: string;
 }
 
+const SOURCES_UZ =
+	'Shayx Muhammad Sodiq Muhammad Yusuf hazratlarining "Mo\'minning me\'roji" va "Ibodati Islomiya" asarlari';
+const SOURCES_UZ_CYRL =
+	'Шайх Муҳаммад Содиқ Муҳаммад Юсуф ҳазратларининг "Мўъминнинг меърожи" ва "Ибодати исломия" асарлари';
+const SOURCES_RU =
+	'трудов шейха Мухаммада Содика Мухаммада Юсуфа: "Мўъминнинг меърожи" и "Ибодати Исломия"';
+const SOURCES_EN =
+	'the works of Shaykh Muhammad Sodiq Muhammad Yusuf: "Mo\'minning Me\'roji" and "Ibodati Islomiya"';
+
 const messages: Record<BotLocale, BotMessages> = {
 	uz: {
 		welcome: `Assalomu alaykum! 🕌
 
-Bu bot — *Namozga kech qo'shilganlar uchun yo'riqnoma*. Imom bilan namozga kech qo'shilganingizda nechta rakat qolganini va qanday o'qish kerakligini ko'rsatadi.
+*Rakāt* — jamoat namoziga kech qo'shilganlar uchun qolgan rakatlar bo'yicha yo'riqnoma.
+
+Hisob-kitob va ko'rsatmalar ${SOURCES_UZ} asosida tuzilgan.
 
 Pastdagi tugma orqali ilovani oching 👇`,
 		help: `*Buyruqlar:*
@@ -32,20 +43,53 @@ Pastdagi tugma orqali ilovani oching 👇`,
 /help — yordam
 /about — ilova haqida
 
+Ushbu yo'riqnoma ${SOURCES_UZ} asosida tuzilgan.
+
 Yoki pastdagi *Menu* tugmasidan ilovani oching.`,
 		about: `*Rakāt — Namoz Yo'riqnomasi*
 
-Imom bilan kech qo'shilganda nechta rakat qolganini hisoblaydi va har bir rakatda Fotiha + Sura yoki faqat Fotiha o'qishni, qachon tashahhud o'tirishni ko'rsatadi.
+Jamoat namoziga kech qo'shilganlar uchun qolgan rakatlar bo'yicha yo'riqnoma.
+
+Ushbu bot ${SOURCES_UZ} asosida tuzilgan.
 
 Open source: github.com/iamDiyorjon/SalahGuide
 Alloh taolo namozimizni qabul qilsin!`,
 		unknown: "Noma'lum buyruq. /help orqali buyruqlar ro'yxatini ko'ring.",
 		openButton: "🕌 Ilovani ochish",
 	},
+	"uz-cyrl": {
+		welcome: `Ассалому алайкум! 🕌
+
+*Rakāt* — жамоат намозига кеч қўшилганлар учун қолган ракатлар бўйича йўриқнома.
+
+Ҳисоб-китоб ва кўрсатмалар ${SOURCES_UZ_CYRL} асосида тузилган.
+
+Пастдаги тугма орқали иловани очинг 👇`,
+		help: `*Буйруқлар:*
+/start — ботни бошлаш
+/help — ёрдам
+/about — илова ҳақида
+
+Ушбу йўриқнома ${SOURCES_UZ_CYRL} асосида тузилган.
+
+Ёки пастдаги *Menu* тугмасидан иловани очинг.`,
+		about: `*Rakāt — Намоз йўриқномаси*
+
+Жамоат намозига кеч қўшилганлар учун қолган ракатлар бўйича йўриқнома.
+
+Ушбу бот ${SOURCES_UZ_CYRL} асосида тузилган.
+
+Open source: github.com/iamDiyorjon/SalahGuide
+Аллоҳ таоло намозимизни қабул қилсин!`,
+		unknown: "Номаълум буйруқ. /help орқали буйруқлар рўйхатини кўринг.",
+		openButton: "🕌 Иловани очиш",
+	},
 	ru: {
 		welcome: `Ассаламу алайкум! 🕌
 
-Этот бот — *руководство для опоздавших на намаз*. Подскажет, сколько ракаатов осталось и как правильно их завершить.
+*Rakāt* — руководство по оставшимся ракаатам для тех, кто опоздал на коллективный намаз.
+
+Расчёты и указания основаны на ${SOURCES_RU}.
 
 Откройте приложение по кнопке ниже 👇`,
 		help: `*Команды:*
@@ -53,10 +97,14 @@ Alloh taolo namozimizni qabul qilsin!`,
 /help — помощь
 /about — о приложении
 
+Это руководство основано на ${SOURCES_RU}.
+
 Или нажмите кнопку *Menu* внизу.`,
 		about: `*Rakāt — Руководство по намазу*
 
-Считает оставшиеся ракааты для опоздавших и показывает, что читать (Фатиха + сура или только Фатиха) и когда сидеть на ташаххуд.
+Руководство по оставшимся ракаатам для тех, кто опоздал на коллективный намаз.
+
+Бот составлен на основе ${SOURCES_RU}.
 
 Open source: github.com/iamDiyorjon/SalahGuide
 Да примет Аллах наш намаз!`,
@@ -66,7 +114,9 @@ Open source: github.com/iamDiyorjon/SalahGuide
 	en: {
 		welcome: `Assalamu alaykum! 🕌
 
-This bot is a *late-joiner's prayer guide*. It tells you how many rakats remain and how to complete them correctly.
+*Rakāt* — a guide to the remaining rakats for those who joined the congregational prayer late.
+
+Calculations and rulings are based on ${SOURCES_EN}.
 
 Open the app using the button below 👇`,
 		help: `*Commands:*
@@ -74,10 +124,14 @@ Open the app using the button below 👇`,
 /help — help
 /about — about the app
 
+This guide is based on ${SOURCES_EN}.
+
 Or tap the *Menu* button below.`,
 		about: `*Rakāt — Prayer Guide*
 
-Calculates remaining rakats for late joiners and shows what to recite (Fatiha + Sura or Fatiha only) and when to sit for Tashahhud.
+A guide to the remaining rakats for those who joined the congregational prayer late.
+
+This bot is based on ${SOURCES_EN}.
 
 Open source: github.com/iamDiyorjon/SalahGuide
 May Allah accept our prayers!`,
@@ -98,7 +152,12 @@ interface TelegramUpdate {
 }
 
 function pickLocale(code: string | undefined): BotLocale {
-	const c = code?.slice(0, 2).toLowerCase();
+	const lower = code?.toLowerCase() ?? "";
+	// Forward-compatible: if Telegram ever sends `uz-Cyrl-UZ` we honor it.
+	// In practice Telegram only sends `uz`, so Cyrillic users currently
+	// see Latin from the bot and pick Cyrillic manually in the WebApp.
+	if (lower.startsWith("uz") && lower.includes("cyrl")) return "uz-cyrl";
+	const c = lower.slice(0, 2);
 	if (c === "ru") return "ru";
 	if (c === "en") return "en";
 	return "uz";

@@ -3,54 +3,113 @@
 @tailwind utilities;
 
 /*
-  Theme variables. Outside Telegram we use the green/blue identity colors;
-  inside Telegram we adopt the user's theme so the app blends in with the
-  surrounding chat (light or dark).
+  Theme tokens.
+  Outside Telegram → manuscript palette (paper, ink, muted gold).
+  Inside Telegram   → adopt user's theme so the Mini App blends with chat.
 */
 :root {
-	--sg-bg: #f0fdf4;
-	--sg-card-bg: #ffffff;
-	--sg-text: #1f2937;
-	--sg-border: #e5e7eb;
-	--sg-input-bg: #ffffff;
-	--sg-step-bg: #f9fafb;
-	--sg-info-bg: #eff6ff;
-	--sg-success-bg: #f0fdf4;
-	--sg-success-border: #bbf7d0;
-	--sg-accent: #16a34a;
-	--sg-accent-text: #ffffff;
+	/* manuscript palette */
+	--sg-bg:              #F4EFE3;
+	--sg-card-bg:         #FBF7EC;
+	--sg-text:            #1B2422;
+	--sg-text-mid:        #4A5350;
+	--sg-text-soft:       #7B8079;
+	--sg-border:          rgba(27, 36, 34, 0.10);
+	--sg-border-strong:   rgba(27, 36, 34, 0.18);
+	--sg-input-bg:        rgba(255, 253, 246, 0.5);
+	--sg-step-bg:         rgba(27, 36, 34, 0.05);
+	--sg-info-bg:         rgba(166, 119, 50, 0.08);
+	--sg-success-bg:      #FBF7EC;
+	--sg-success-border:  rgba(166, 119, 50, 0.25);
+	--sg-accent:          #A67732;       /* muted manuscript gold */
+	--sg-accent-deep:     #8C6325;
+	--sg-accent-soft:     rgba(166, 119, 50, 0.10);
+	--sg-accent-text:     #FBF7EC;
 }
 
 html[data-telegram="true"] {
 	--sg-bg: var(--tg-theme-bg-color, #ffffff);
 	--sg-card-bg: var(--tg-theme-secondary-bg-color, #ffffff);
 	--sg-text: var(--tg-theme-text-color, #1f2937);
-	--sg-border: var(--tg-theme-section-separator-color, #e5e7eb);
+	--sg-text-mid: var(--tg-theme-hint-color, #4A5350);
+	--sg-text-soft: var(--tg-theme-hint-color, #7B8079);
+	--sg-border: var(--tg-theme-section-separator-color, rgba(0,0,0,0.1));
+	--sg-border-strong: var(--tg-theme-section-separator-color, rgba(0,0,0,0.18));
 	--sg-input-bg: var(--tg-theme-bg-color, #ffffff);
 	--sg-step-bg: var(--tg-theme-bg-color, #f9fafb);
 	--sg-info-bg: var(--tg-theme-secondary-bg-color, #eff6ff);
 	--sg-success-bg: var(--tg-theme-secondary-bg-color, #f0fdf4);
 	--sg-success-border: var(--tg-theme-section-separator-color, #bbf7d0);
 	--sg-accent: var(--tg-theme-button-color, #16a34a);
+	--sg-accent-deep: var(--tg-theme-button-color, #15803d);
+	--sg-accent-soft: var(--tg-theme-secondary-bg-color, rgba(22,163,74,0.08));
 	--sg-accent-text: var(--tg-theme-button-text-color, #ffffff);
 }
 
-/* Subtle gradient backdrop only in browser mode (Telegram theme owns its own bg) */
+/* Subtle paper-warm gradient backdrop in browser mode only. */
 html:not([data-telegram="true"]) .sg-gradient {
-	background-image: linear-gradient(to bottom right, #f0fdf4, #eff6ff);
+	background-image:
+		radial-gradient(120% 60% at 50% 0%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 60%),
+		linear-gradient(180deg, #F4EFE3 0%, #EDE6D4 100%);
 }
 
-/* Respect Telegram safe-area insets when running fullscreen.
-   --tg-safe-* are populated from JS (sum of safeAreaInset + contentSafeAreaInset)
-   so the Telegram header overlay does not cover our content. */
+/* Safe-area insets (Telegram fullscreen). */
 body {
 	padding-top: max(env(safe-area-inset-top), var(--tg-safe-top, 0px));
 	padding-bottom: max(env(safe-area-inset-bottom), var(--tg-safe-bottom, 0px));
 	padding-left: max(env(safe-area-inset-left), var(--tg-safe-left, 0px));
 	padding-right: max(env(safe-area-inset-right), var(--tg-safe-right, 0px));
+	font-family: 'Manrope', system-ui, sans-serif;
 }
 
 button,
 [role="button"] {
 	-webkit-tap-highlight-color: transparent;
+}
+
+/* Reusable utility classes for the new form/result.
+   These compose with Tailwind — used wherever Tailwind would be too verbose. */
+@layer components {
+	.sg-card {
+		@apply rounded-xl border;
+		background: var(--sg-input-bg);
+		border-color: var(--sg-border);
+		transition: all 0.18s cubic-bezier(.2,.7,.3,1);
+	}
+	.sg-card:hover {
+		border-color: var(--sg-border-strong);
+		background: rgba(255, 253, 246, 0.9);
+	}
+	.sg-card.is-on {
+		background: var(--sg-text);
+		color: var(--sg-bg);
+		border-color: var(--sg-text);
+	}
+	html[data-telegram="true"] .sg-card.is-on {
+		background: var(--sg-accent);
+		color: var(--sg-accent-text);
+		border-color: var(--sg-accent);
+	}
+
+	.sg-eyebrow {
+		font-size: 10px;
+		text-transform: uppercase;
+		letter-spacing: 0.18em;
+		font-weight: 600;
+		color: var(--sg-text-soft);
+	}
+
+	.sg-rule {
+		height: 1px;
+		flex: 1;
+		background: var(--sg-border);
+	}
+
+	.sg-anim-fade-up {
+		animation: sg-fade-up 0.36s cubic-bezier(.2,.7,.3,1);
+	}
+	@keyframes sg-fade-up {
+		from { opacity: 0; transform: translateY(8px); }
+		to   { opacity: 1; transform: translateY(0); }
+	}
 }

@@ -5,8 +5,14 @@ import App from "./App";
 
 const MOBILE_TG_PLATFORMS = new Set(["android", "android_x", "ios"]);
 
+// The Telegram WebApp SDK script loads in a regular browser too and exposes
+// a stub object. Inside an actual Telegram client, tg.platform is one of
+// "android" | "android_x" | "ios" | "tdesktop" | "weba" | "webk" | "unigram" | ...;
+// outside of it (or when the SDK falls back), platform is "unknown".
+// We only apply Telegram theming when the app is genuinely running inside one.
 const tg = window.Telegram?.WebApp;
-if (tg) {
+const isInsideTelegram = !!tg && tg.platform !== "unknown";
+if (tg && isInsideTelegram) {
 	tg.ready();
 	tg.expand();
 	// Fullscreen makes sense on phones (reclaims the chat header) but on

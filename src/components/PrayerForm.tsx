@@ -18,6 +18,15 @@ interface Props {
 	onPositionChange: (value: Position | "") => void;
 }
 
+// Arabic display names — kept alongside the localized names.
+const arabic: Record<PrayerKey, string> = {
+	bomdod: "الفجر",
+	peshin: "الظهر",
+	asr: "العصر",
+	shom: "المغرب",
+	xufton: "العشاء",
+};
+
 export function PrayerForm({
 	prayer,
 	joinedRakat,
@@ -31,83 +40,165 @@ export function PrayerForm({
 	const rakatCount = prayer ? prayers[prayer].rakatSoni : 0;
 
 	return (
-		<div className="space-y-6">
-			<div>
-				<label
-					htmlFor="prayer-select"
-					className="block text-sm font-medium mb-2 opacity-80"
+		<div className="space-y-7">
+			{/* Step 1 — prayer cards */}
+			<div className="space-y-3">
+				<SectionHead index="1" label={t.form.prayerLabel} done={!!prayer} />
+				<div
+					role="group"
+					aria-label={t.form.prayerLabel}
+					data-testid="prayer-group"
+					className="grid grid-cols-5 gap-1.5"
 				>
-					{t.form.prayerLabel}
-				</label>
-				<select
-					id="prayer-select"
-					value={prayer}
-					onChange={(e) => onPrayerChange(e.target.value as PrayerKey | "")}
-					className="w-full p-3 rounded-lg border border-[var(--sg-border)] bg-[var(--sg-input-bg)] text-[var(--sg-text)] focus:ring-2 focus:ring-[var(--sg-accent)] focus:border-transparent"
-				>
-					<option value="">{t.form.prayerPlaceholder}</option>
-					{prayerKeys.map((key) => (
-						<option key={key} value={key}>
-							{t.form.prayerOption(
-								prayers[key].nom[locale],
-								prayers[key].rakatSoni,
-							)}
-						</option>
-					))}
-				</select>
+					{prayerKeys.map((key) => {
+						const p = prayers[key];
+						const selected = prayer === key;
+						return (
+							<button
+								key={key}
+								type="button"
+								aria-pressed={selected}
+								data-testid={`prayer-${key}`}
+								onClick={() => onPrayerChange(selected ? "" : key)}
+								className={
+									"sg-card flex flex-col items-center gap-1.5 py-3 px-1 cursor-pointer" +
+									(selected ? " is-on" : "")
+								}
+							>
+								<span className="font-display text-base leading-none font-medium tracking-tight">
+									{p.nom[locale]}
+								</span>
+								<span className="font-arabic text-[11px] leading-none opacity-70">
+									{arabic[key]}
+								</span>
+								<span className="flex gap-[3px] mt-0.5" aria-hidden="true">
+									{Array.from({ length: p.rakatSoni }).map((_, i) => (
+										<span
+											key={i}
+											className={
+												"w-1 h-1 rounded-full border " +
+												(selected
+													? "bg-[var(--sg-accent)] border-[var(--sg-accent)]"
+													: "border-current opacity-50")
+											}
+										/>
+									))}
+								</span>
+							</button>
+						);
+					})}
+				</div>
 			</div>
 
+			{/* Step 2 — rakat chips */}
 			{prayer && (
-				<div>
-					<label
-						htmlFor="rakat-select"
-						className="block text-sm font-medium mb-2 opacity-80"
+				<div className="space-y-3 sg-anim-fade-up">
+					<SectionHead
+						index="2"
+						label={t.form.rakatLabel}
+						done={joinedRakat !== null}
+					/>
+					<div
+						role="group"
+						aria-label={t.form.rakatLabel}
+						data-testid="rakat-group"
+						className="grid gap-2"
+						style={{
+							gridTemplateColumns: `repeat(${rakatCount}, minmax(0, 1fr))`,
+						}}
 					>
-						{t.form.rakatLabel}
-					</label>
-					<select
-						id="rakat-select"
-						value={joinedRakat ?? ""}
-						onChange={(e) =>
-							onJoinedRakatChange(
-								e.target.value ? Number(e.target.value) : null,
-							)
-						}
-						className="w-full p-3 rounded-lg border border-[var(--sg-border)] bg-[var(--sg-input-bg)] text-[var(--sg-text)] focus:ring-2 focus:ring-[var(--sg-accent)] focus:border-transparent"
-					>
-						<option value="">{t.form.rakatPlaceholder}</option>
-						{Array.from({ length: rakatCount }, (_, i) => (
-							<option key={i + 1} value={i + 1}>
-								{t.form.rakatOption(i + 1)}
-							</option>
-						))}
-					</select>
+						{Array.from({ length: rakatCount }, (_, i) => i + 1).map((n) => {
+							const selected = joinedRakat === n;
+							return (
+								<button
+									key={n}
+									type="button"
+									aria-pressed={selected}
+									data-testid={`rakat-${n}`}
+									onClick={() => onJoinedRakatChange(selected ? null : n)}
+									className={
+										"sg-card flex items-center justify-center h-[60px] cursor-pointer" +
+										(selected ? " is-on" : "")
+									}
+								>
+									<span className="font-display text-2xl font-medium leading-none tabular-nums">
+										{n}
+									</span>
+								</button>
+							);
+						})}
+					</div>
 				</div>
 			)}
 
+			{/* Step 3 — position cards */}
 			{joinedRakat !== null && (
-				<fieldset>
-					<legend className="block text-sm font-medium mb-2 opacity-80">
-						{t.form.positionLabel}
-					</legend>
-					<div className="space-y-2">
-						{(["qiyom", "ruku"] as const).map((key) => (
-							<label key={key} className="flex items-center cursor-pointer">
-								<input
-									type="radio"
-									name="position"
-									value={key}
-									checked={position === key}
-									onChange={(e) => onPositionChange(e.target.value as Position)}
-									className="mr-3 accent-[var(--sg-accent)]"
-								/>
-								<span>
-									{key === "qiyom" ? t.form.positionQiyom : t.form.positionRuku}
-								</span>
-							</label>
-						))}
+				<fieldset className="space-y-3 sg-anim-fade-up">
+					<legend className="sr-only">{t.form.positionLabel}</legend>
+					<SectionHead
+						index="3"
+						label={t.form.positionLabel}
+						done={!!position}
+					/>
+					<div
+						role="group"
+						aria-label={t.form.positionLabel}
+						data-testid="position-group"
+						className="grid grid-cols-2 gap-2"
+					>
+						{(["qiyom", "ruku"] as const).map((key) => {
+							const selected = position === key;
+							const label =
+								key === "qiyom" ? t.form.positionQiyom : t.form.positionRuku;
+							return (
+								<button
+									key={key}
+									type="button"
+									aria-pressed={selected}
+									data-testid={`position-${key}`}
+									onClick={() => onPositionChange(selected ? "" : key)}
+									className={
+										"sg-card text-left px-4 py-4 min-h-[68px] flex items-center cursor-pointer" +
+										(selected ? " is-on" : "")
+									}
+								>
+									<span className="font-display text-[17px] font-medium leading-snug tracking-tight">
+										{label}
+									</span>
+								</button>
+							);
+						})}
 					</div>
 				</fieldset>
+			)}
+		</div>
+	);
+}
+
+function SectionHead({
+	index,
+	label,
+	done,
+}: {
+	index: string;
+	label: string;
+	done: boolean;
+}) {
+	return (
+		<div className="flex items-center gap-2.5">
+			<span className="font-mono text-[10px] font-medium opacity-60 w-4">
+				{index}
+			</span>
+			<span className="sg-eyebrow">{label}</span>
+			<span className="sg-rule" />
+			{done && (
+				<span
+					className="text-[11px] font-bold"
+					style={{ color: "var(--sg-accent)" }}
+					aria-hidden="true"
+				>
+					✓
+				</span>
 			)}
 		</div>
 	);

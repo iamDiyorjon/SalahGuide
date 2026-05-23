@@ -74,27 +74,34 @@ export default function App() {
 				</div>
 
 				<header className="text-center mb-8">
-					<h1 className="text-3xl font-bold mb-2">{t.app.title}</h1>
-					<p className="opacity-80">{t.app.subtitle}</p>
+					<h1 className="font-display text-4xl font-medium tracking-tight leading-tight mb-3 text-balance">
+						{t.app.title}
+					</h1>
+					<p
+						className="text-sm max-w-xs mx-auto"
+						style={{ color: "var(--sg-text-mid)" }}
+					>
+						{t.app.subtitle}
+					</p>
 				</header>
 
-				<section
-					data-testid="prayer-form-card"
-					className="bg-[var(--sg-card-bg)] rounded-lg shadow-lg p-6 mb-6 border border-[var(--sg-border)]"
-				>
-					<div className="flex justify-between items-center mb-4">
-						<h2 className="text-lg font-semibold">{t.form.sectionTitle}</h2>
-						{hasAnySelection && (
+				<section data-testid="prayer-form-card" className="mb-8">
+					{hasAnySelection && (
+						<div className="flex justify-end mb-4">
 							<button
 								type="button"
 								onClick={reset}
 								data-testid="reset-button"
-								className="text-sm px-3 py-1.5 rounded-md border border-[var(--sg-border)] hover:bg-[var(--sg-step-bg)] transition"
+								className="text-xs uppercase tracking-[0.16em] font-medium px-3 py-1.5 rounded-md border hover:bg-[var(--sg-step-bg)] transition"
+								style={{
+									borderColor: "var(--sg-border)",
+									color: "var(--sg-text-mid)",
+								}}
 							>
 								{t.form.reset}
 							</button>
-						)}
-					</div>
+						</div>
+					)}
 					<PrayerForm
 						prayer={selection.prayer}
 						joinedRakat={selection.joinedRakat}

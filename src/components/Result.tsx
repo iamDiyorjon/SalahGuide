@@ -1,4 +1,4 @@
-import { prayers } from "../data/prayers";
+import { prayers, type PrayerKey } from "../data/prayers";
 import type { Locale } from "../i18n/locales";
 import type { Translations } from "../i18n/translations";
 import type { CalculationResult } from "../lib/calculate";
@@ -9,30 +9,77 @@ interface Props {
 	t: Translations;
 }
 
+const arabic: Record<PrayerKey, string> = {
+	bomdod: "الفجر",
+	peshin: "الظهر",
+	asr: "العصر",
+	shom: "المغرب",
+	xufton: "العشاء",
+};
+
 export function Result({ result, locale, t }: Props) {
 	const prayerName = prayers[result.prayer].nom[locale];
-	const positionLabel =
-		result.position === "qiyom" ? t.form.positionQiyom : t.form.positionRuku;
 
 	return (
 		<section
 			data-testid="result"
-			className="bg-[var(--sg-card-bg)] text-[var(--sg-text)] rounded-2xl shadow-lg border border-[var(--sg-border)] overflow-hidden"
+			className="sg-anim-fade-up overflow-hidden -mx-4 sm:mx-0 sm:rounded-2xl border-y sm:border"
+			style={{
+				background: "var(--sg-card-bg)",
+				color: "var(--sg-text)",
+				borderColor: "var(--sg-border)",
+			}}
 		>
-			<SummaryHeader
-				prayerName={prayerName}
-				rakatLabel={t.form.rakatOption(result.joinedRakat)}
-				positionLabel={positionLabel}
-				heading={t.result.heading}
-			/>
+			{/* Header */}
+			<header
+				className="text-center px-6 pt-7 pb-5 border-b"
+				style={{ borderColor: "var(--sg-border)" }}
+			>
+				<div className="flex items-center justify-center gap-2 mb-2">
+					<Dot />
+					<span
+						className="text-[10px] uppercase font-semibold tracking-[0.22em]"
+						style={{ color: "var(--sg-accent)" }}
+					>
+						{t.result.heading}
+					</span>
+					<Dot />
+				</div>
+				<h2 className="font-display text-[34px] font-medium tracking-tight leading-none">
+					{prayerName}
+				</h2>
+				<div
+					className="font-arabic text-[22px] mt-2"
+					style={{ color: "var(--sg-text-mid)", direction: "rtl" }}
+				>
+					{arabic[result.prayer]}
+				</div>
+			</header>
 
-			<div className="px-6 sm:px-8 pb-6 sm:pb-8">
-				<StatRow
-					withImam={result.imomBilanOqildi}
-					remaining={result.qolganRakatlar}
-					t={t}
-				/>
+			{/* Stats */}
+			<div className="px-6 py-5">
+				<div className="flex items-stretch">
+					<Stat
+						label={t.result.imomLabel}
+						value={result.imomBilanOqildi}
+						unit={t.result.rakatUnit}
+					/>
+					<div
+						className="w-px self-stretch"
+						style={{ background: "var(--sg-border)" }}
+					/>
+					<Stat
+						label={t.result.qoldiLabel}
+						value={result.qolganRakatlar}
+						unit={t.result.rakatUnit}
+						accent={result.qolganRakatlar > 0}
+						align="right"
+					/>
+				</div>
+			</div>
 
+			{/* Body */}
+			<div className="px-6 pb-7">
 				{result.tugallangan ? (
 					<CompleteState t={t} />
 				) : (
@@ -46,58 +93,13 @@ export function Result({ result, locale, t }: Props) {
 	);
 }
 
-function SummaryHeader({
-	prayerName,
-	rakatLabel,
-	positionLabel,
-	heading,
-}: {
-	prayerName: string;
-	rakatLabel: string;
-	positionLabel: string;
-	heading: string;
-}) {
+function Dot() {
 	return (
-		<header className="px-6 sm:px-8 pt-6 sm:pt-8 pb-5 border-b border-[var(--sg-border)]">
-			<p className="text-[10px] uppercase tracking-[0.2em] opacity-50 mb-2">
-				{heading}
-			</p>
-			<h2 className="text-3xl font-semibold tracking-tight leading-tight">
-				{prayerName}
-			</h2>
-			<p className="mt-2 text-sm opacity-65">
-				<span className="tabular-nums">{rakatLabel}</span>
-				<span className="mx-2 opacity-40">·</span>
-				<span>{positionLabel}</span>
-			</p>
-		</header>
-	);
-}
-
-function StatRow({
-	withImam,
-	remaining,
-	t,
-}: {
-	withImam: number;
-	remaining: number;
-	t: Translations;
-}) {
-	return (
-		<div className="grid grid-cols-2 gap-4 mt-6 mb-2">
-			<Stat
-				label={t.result.imomLabel}
-				value={withImam}
-				unit={t.result.rakatUnit}
-				accent={false}
-			/>
-			<Stat
-				label={t.result.qoldiLabel}
-				value={remaining}
-				unit={t.result.rakatUnit}
-				accent={remaining > 0}
-			/>
-		</div>
+		<span
+			className="w-[3px] h-[3px] rounded-full"
+			style={{ background: "var(--sg-accent)" }}
+			aria-hidden="true"
+		/>
 	);
 }
 
@@ -105,65 +107,87 @@ function Stat({
 	label,
 	value,
 	unit,
-	accent,
+	accent = false,
+	align = "left",
 }: {
 	label: string;
 	value: number;
 	unit: string;
-	accent: boolean;
+	accent?: boolean;
+	align?: "left" | "right";
 }) {
 	return (
 		<div
-			className={
-				accent
-					? "border-l-2 border-[var(--sg-accent)] pl-4 py-1"
-					: "border-l-2 border-[var(--sg-border)] pl-4 py-1"
-			}
+			className={`flex-1 flex flex-col gap-1.5 py-1 ${
+				align === "right" ? "items-end pl-5 text-right" : "pr-5"
+			}`}
 		>
-			<p className="text-[10px] uppercase tracking-[0.18em] opacity-55 mb-1.5">
-				{label}
-			</p>
-			<p className="flex items-baseline gap-1.5">
+			<span className="sg-eyebrow">{label}</span>
+			<span className="flex items-baseline gap-1.5">
 				<span
 					className={
-						accent
-							? "text-4xl font-light tabular-nums text-[var(--sg-accent)]"
-							: "text-4xl font-light tabular-nums"
+						"font-display text-[44px] leading-none tabular-nums tracking-tight " +
+						(accent ? "font-medium" : "font-normal")
 					}
+					style={accent ? { color: "var(--sg-accent)" } : undefined}
 				>
 					{value}
 				</span>
-				<span className="text-xs opacity-55">{unit}</span>
-			</p>
+				<span
+					className="text-[11px] lowercase"
+					style={{ color: "var(--sg-text-soft)" }}
+				>
+					{unit}
+				</span>
+			</span>
 		</div>
 	);
 }
 
 function CompleteState({ t }: { t: Translations }) {
 	return (
-		<div data-testid="complete-state" className="mt-8 py-10 text-center">
-			<div className="inline-flex items-center justify-center w-14 h-14 rounded-full border-2 border-[var(--sg-accent)] mb-5">
+		<div data-testid="complete-state" className="text-center py-10">
+			<div className="inline-flex mb-4" style={{ color: "var(--sg-accent)" }}>
 				<svg
-					className="w-6 h-6 text-[var(--sg-accent)]"
-					viewBox="0 0 24 24"
+					width="56"
+					height="56"
+					viewBox="0 0 56 56"
 					fill="none"
-					stroke="currentColor"
-					strokeWidth="2.5"
-					strokeLinecap="round"
-					strokeLinejoin="round"
 					aria-hidden="true"
 				>
-					<polyline points="20 6 9 17 4 12" />
+					<circle
+						cx="28"
+						cy="28"
+						r="26"
+						stroke="currentColor"
+						strokeWidth="0.8"
+						opacity="0.3"
+					/>
+					<circle
+						cx="28"
+						cy="28"
+						r="20"
+						stroke="currentColor"
+						strokeWidth="0.8"
+						opacity="0.5"
+					/>
+					<path
+						d="M18 28.5 L25 35 L39 19"
+						stroke="currentColor"
+						strokeWidth="1.6"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+					/>
 				</svg>
 			</div>
-			<h3 className="text-2xl font-semibold mb-3 tracking-tight">
+			<h3 className="font-display text-[26px] font-medium mb-2 tracking-tight">
 				{t.result.complete.title}
 			</h3>
-			<p className="text-base opacity-85 mb-1.5 max-w-sm mx-auto leading-relaxed">
-				{t.result.complete.body1}
-			</p>
-			<p className="text-sm opacity-60 max-w-sm mx-auto leading-relaxed">
-				{t.result.complete.body2}
+			<p
+				className="text-sm leading-relaxed max-w-[30ch] mx-auto"
+				style={{ color: "var(--sg-text-mid)" }}
+			>
+				{t.result.complete.body1}. {t.result.complete.body2}.
 			</p>
 		</div>
 	);
@@ -176,52 +200,72 @@ function MakeupSteps({
 	result: CalculationResult;
 	t: Translations;
 }) {
-	const lastIdx = result.yoriqnomalar.length - 1;
+	const last = result.yoriqnomalar.length - 1;
 	return (
-		<div className="mt-10">
-			<h3 className="text-lg font-medium tracking-tight mb-7">
-				{t.result.makeup.heading(result.qolganRakatlar)}
-			</h3>
+		<>
+			<div className="flex items-center gap-3 my-6">
+				<span className="sg-rule" />
+				<span
+					className="text-[11px] uppercase tracking-[0.18em] font-semibold whitespace-nowrap"
+					style={{ color: "var(--sg-text-mid)" }}
+				>
+					{t.result.makeup.heading(result.qolganRakatlar)}
+				</span>
+				<span className="sg-rule" />
+			</div>
 
-			<ol data-testid="instruction-list" className="relative space-y-7">
+			<ol data-testid="instruction-list" className="space-y-5">
 				{result.yoriqnomalar.map((step, idx) => {
-					const isFinal = idx === lastIdx;
-					const showConnector = idx < lastIdx;
+					const isFinal = idx === last;
 					return (
 						<li
 							key={step.rakatRaqami}
 							data-testid="instruction-item"
-							className="relative pl-12"
+							className="grid gap-3.5"
+							style={{ gridTemplateColumns: "32px 1fr" }}
 						>
-							{showConnector && (
+							<span className="flex flex-col items-center">
 								<span
-									aria-hidden="true"
-									className="absolute left-[15px] top-9 -bottom-7 w-px bg-[var(--sg-border)]"
-								/>
-							)}
-							<span
-								className={
-									isFinal
-										? "absolute left-0 top-0 w-8 h-8 rounded-full flex items-center justify-center text-sm tabular-nums font-semibold bg-[var(--sg-accent)] text-[var(--sg-accent-text)]"
-										: "absolute left-0 top-0 w-8 h-8 rounded-full flex items-center justify-center text-sm tabular-nums font-medium border border-[var(--sg-border)] bg-[var(--sg-card-bg)]"
-								}
-							>
-								{step.rakatRaqami}
+									className="w-7 h-7 rounded-full inline-flex items-center justify-center font-mono text-xs font-medium tabular-nums border"
+									style={
+										isFinal
+											? {
+													background: "var(--sg-accent)",
+													color: "var(--sg-accent-text)",
+													borderColor: "var(--sg-accent)",
+												}
+											: {
+													borderColor: "var(--sg-text-soft)",
+													color: "var(--sg-text)",
+												}
+									}
+								>
+									{step.rakatRaqami}
+								</span>
+								{idx < last && (
+									<span
+										className="w-px flex-1 min-h-[20px] mt-1.5"
+										style={{ background: "var(--sg-border)" }}
+									/>
+								)}
 							</span>
 
-							<div className="pt-1">
-								<div className="flex items-baseline gap-2.5 mb-3.5">
-									<h4 className="text-base font-semibold tracking-tight">
+							<div className="pt-0.5">
+								<div className="flex items-baseline gap-2.5 mb-2.5">
+									<h4 className="font-display text-lg font-medium tracking-tight">
 										{t.result.makeup.rakatLabel(step.rakatRaqami)}
 									</h4>
 									{isFinal && (
-										<span className="text-[10px] uppercase tracking-[0.2em] text-[var(--sg-accent)] font-medium">
+										<span
+											className="text-[9px] uppercase tracking-[0.18em] font-bold"
+											style={{ color: "var(--sg-accent)" }}
+										>
 											{t.result.makeup.finalBadge}
 										</span>
 									)}
 								</div>
 
-								<dl className="space-y-3">
+								<dl className="flex flex-col gap-2.5">
 									<Field
 										label={t.result.makeup.qiroatLabel}
 										value={t.result.qiroat[step.qiroat]}
@@ -247,7 +291,7 @@ function MakeupSteps({
 					);
 				})}
 			</ol>
-		</div>
+		</>
 	);
 }
 
@@ -262,14 +306,13 @@ function Field({
 }) {
 	return (
 		<div>
-			<dt className="text-[10px] uppercase tracking-[0.18em] opacity-55 mb-1">
-				{label}
-			</dt>
+			<dt className="sg-eyebrow mb-1">{label}</dt>
 			<dd
-				className={
+				className="text-sm leading-relaxed"
+				style={
 					accent
-						? "text-[var(--sg-accent)] font-medium leading-relaxed"
-						: "leading-relaxed"
+						? { color: "var(--sg-accent-deep)", fontWeight: 500 }
+						: undefined
 				}
 			>
 				{value}
@@ -280,17 +323,26 @@ function Field({
 
 function Notes({ t }: { t: Translations }) {
 	return (
-		<div className="mt-10 pt-7 border-t border-[var(--sg-border)]">
-			<p className="text-[10px] uppercase tracking-[0.2em] opacity-55 mb-4">
-				{t.result.makeup.notesTitle}
-			</p>
-			<ol className="space-y-4">
+		<div
+			className="mt-7 pt-5 border-t"
+			style={{ borderColor: "var(--sg-border)" }}
+		>
+			<p className="sg-eyebrow mb-3.5">{t.result.makeup.notesTitle}</p>
+			<ol className="flex flex-col gap-3">
 				{t.result.makeup.notes.map((note, idx) => (
-					<li key={note} className="flex gap-4">
-						<span className="text-[11px] tabular-nums opacity-45 font-medium pt-[3px] shrink-0 w-5">
+					<li key={note} className="flex gap-3.5">
+						<span
+							className="font-mono text-[10px] font-medium tabular-nums pt-[3px] shrink-0 w-5"
+							style={{ color: "var(--sg-text-soft)", opacity: 0.75 }}
+						>
 							{String(idx + 1).padStart(2, "0")}
 						</span>
-						<p className="text-sm leading-relaxed opacity-90 flex-1">{note}</p>
+						<p
+							className="text-[13px] leading-relaxed flex-1"
+							style={{ color: "var(--sg-text-mid)" }}
+						>
+							{note}
+						</p>
 					</li>
 				))}
 			</ol>

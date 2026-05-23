@@ -67,8 +67,8 @@ export default function App() {
 		selection.position !== "";
 
 	return (
-		<div className="min-h-[100dvh] bg-[var(--sg-bg)] text-[var(--sg-text)] p-4 sg-gradient">
-			<div className="max-w-2xl mx-auto">
+		<div className="min-h-[100dvh] flex flex-col bg-[var(--sg-bg)] text-[var(--sg-text)] sg-gradient">
+			<div className="w-full max-w-2xl mx-auto my-auto px-4 py-6">
 				<div className="flex justify-end mb-2">
 					<LanguageSwitcher locale={locale} onChange={setLocale} />
 				</div>

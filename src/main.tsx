@@ -3,14 +3,21 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
 
+const MOBILE_TG_PLATFORMS = new Set(["android", "android_x", "ios"]);
+
 const tg = window.Telegram?.WebApp;
 if (tg) {
 	tg.ready();
 	tg.expand();
-	try {
-		tg.requestFullscreen?.();
-	} catch {
-		/* unsupported Telegram version */
+	// Fullscreen makes sense on phones (reclaims the chat header) but on
+	// Telegram Desktop / Web it just stretches the WebApp window edge-to-edge
+	// and leaves the form floating in a sea of whitespace.
+	if (MOBILE_TG_PLATFORMS.has(tg.platform ?? "")) {
+		try {
+			tg.requestFullscreen?.();
+		} catch {
+			/* unsupported Telegram version */
+		}
 	}
 	try {
 		tg.disableVerticalSwipes?.();

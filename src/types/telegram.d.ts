@@ -15,6 +15,7 @@ declare global {
 		requestFullscreen?: () => void;
 		disableVerticalSwipes?: () => void;
 		colorScheme: "light" | "dark";
+		platform?: string;
 		themeParams: Record<string, string>;
 		initData: string;
 		initDataUnsafe: Record<string, unknown>;
